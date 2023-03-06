@@ -9,10 +9,8 @@ router.get('/', async (req, res) => {
   // be sure to include its associated Products
   try {
     const categoryData = await Category.findAll({
-      include: {
-        model: Product,
-        attributes: ['id', 'product_name', 'price', 'stock', 'category_id'],
-      }
+      include: [Product]
+
     });
     return res.status(200).json(categoryData);
   }
@@ -27,13 +25,10 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const categoryData = await Category.findByPk(req.params.id, {
-      include: {
-        model: Product,
-        attributes: ['id', 'product_name', 'price', 'stock', 'category_id'],
-      },
+      include: [Product]
     });
 
-    if (!categoryId) {
+    if (!categoryData) {
       return res.status(404).json({ message: 'No category found' });
     }
     return res.status(200).json(categoryData);
@@ -46,6 +41,9 @@ router.get('/:id', async (req, res) => {
 
 router.post('/', async (req, res) => {
   // create a new category
+  // {
+  //   "category_name": "Hairclips"
+  // }
   try {
     const categoryData = await Category.create(req.body);
     return res.status(200).json(categoryData);
@@ -57,21 +55,18 @@ router.post('/', async (req, res) => {
 
 
 router.put('/:id', async (req, res) => {
+  // update a category by its `id` value
   try {
-    const categoryData = await Category.upddate(req.body, {
+    const categoryData = await Category.update(req.body, {
       where: {
         id: req.params.id,
-      },
-      individualhooks: true,
+      }
     });
-    req.status(200).json(categoryData);
+    res.status(200).json(categoryData);
   } catch (err) {
     res.status(400).json(err);
   }
 });
-
-
-// update a category by its `id` value
 
 
 
